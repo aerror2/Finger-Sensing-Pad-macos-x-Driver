@@ -1,0 +1,6 @@
+31 path=voodoops2/._截包.txt
+20 ctime=1393863376
+20 atime=1388938630
+23 SCHILY.dev=16777220
+22 SCHILY.ino=1499821
+18 SCHILY.nlink=1

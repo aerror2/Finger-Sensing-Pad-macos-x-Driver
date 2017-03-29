@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxFrame" name="frameMain">
+		<style>wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxTAB_TRAVERSAL</style>
+		<size>600,360</size>
+		<title>FSP Configuration</title>
+		<centered>1</centered>
+		<object class="wxBoxSizer">
+			<orient>wxHORIZONTAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>5</border>
+				<object class="wxListbook" name="listbookMain">
+					<style>wxLB_DEFAULT</style>
+					<object class="listbookpage">
+						<label>Declaration</label>
+						<selected>1</selected>
+						<object class="wxPanel" name="panelDeclaration">
+							<style>wxTAB_TRAVERSAL</style>
+							<bg>#ffffff</bg>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALIGN_CENTER</flag>
+									<border>5</border>
+									<object class="wxStaticBitmap" name="sBmpLogo">
+										<bitmap>pic/Logo.png</bitmap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxStaticBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<label>Description</label>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxHtmlWindow" name="htmlWinDeclaration">
+												<style>wxHW_SCROLLBAR_AUTO</style>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="listbookpage">
+						<label>Click On Pad</label>
+						<selected>0</selected>
+						<object class="wxPanel" name="panelClickOnPad">
+							<style>wxTAB_TRAVERSAL</style>
+							<bg>#ffffff</bg>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>2</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER|wxALL</flag>
+											<border>10</border>
+											<object class="wxStaticBitmap" name="sBmpOnPadClick">
+												<bitmap>pic/OpClick.png</bitmap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+											<border>5</border>
+											<object class="wxCheckBox" name="cbEnableOnPadClick">
+												<label>Enable on-pad click</label>
+												<checked>0</checked>
+											</object>
+										</object>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxStaticBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<label>Description</label>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxHtmlWindow" name="htmlWinClickOnPad">
+												<style>wxHW_SCROLLBAR_AUTO</style>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="listbookpage">
+						<label>Scroll On Pad</label>
+						<selected>0</selected>
+						<object class="wxPanel" name="panelScrollOnPad">
+							<style>wxTAB_TRAVERSAL</style>
+							<bg>#ffffff</bg>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>2</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER|wxALL</flag>
+											<border>10</border>
+											<object class="wxStaticBitmap" name="sBmpVHScr">
+												<bitmap>pic/VHDisabled.png</bitmap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="cbEnableVScr">
+														<label>Enable vertical scrolling function</label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="cbEnableHScr">
+														<label>Enable horizontal scrolling function</label>
+														<checked>0</checked>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxStaticBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<label>Description</label>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxHtmlWindow" name="htmlWinScrollOnPad">
+												<style>wxHW_SCROLLBAR_AUTO</style>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="listbookpage">
+						<label>Acceleration</label>
+						<selected>0</selected>
+						<object class="wxPanel" name="panelAcceleration">
+							<style>wxTAB_TRAVERSAL</style>
+							<bg>#ffffff</bg>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>2</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER|wxALL</flag>
+											<border>10</border>
+											<object class="wxStaticBitmap" name="sBmpAccel">
+												<bitmap>pic/Acceleration.png</bitmap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="stAccelSlow">
+														<style>wxALIGN_RIGHT</style>
+														<label>Slow</label>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>5</border>
+													<object class="wxSlider" name="sldrAccel">
+														<style>wxSL_HORIZONTAL</style>
+														<value>5</value>
+														<min>1</min>
+														<max>10</max>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="stAccelFast">
+														<label>Fast</label>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxStaticBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<label>Description</label>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxHtmlWindow" name="htmlWinAcceleration">
+												<style>wxHW_SCROLLBAR_AUTO</style>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="listbookpage">
+						<label>Software Info.</label>
+						<selected>0</selected>
+						<object class="wxPanel" name="panelSwInfo">
+							<style>wxTAB_TRAVERSAL</style>
+							<bg>#ffffff</bg>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALIGN_CENTER</flag>
+									<border>5</border>
+									<object class="wxStaticBitmap" name="sBmpLogo1">
+										<bitmap>pic/Logo.png</bitmap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxStaticBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<label>Description</label>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxHtmlWindow" name="htmlWinSwInfo">
+												<style>wxHW_SCROLLBAR_AUTO</style>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="btnOk">
+							<label>OK</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="btnCancel">
+							<label>Cancel</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="btnApply">
+							<enabled>0</enabled>
+							<label>Apply</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="btnDefault">
+							<label>Default</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+	<object class="wxFrame" name="frameInfo">
+		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+		<size>500,300</size>
+		<title></title>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="listbookImgHeight">
+					<label>40</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="listbookImgWidth">
+					<label>40</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="frameMainHeight">
+					<label>360</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="frameMainWidth">
+					<label>600</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="htmlWinDeclarationText">
+					<label>Sentelic&apos;s Finger-sensing Pad is covered by the following patents:\n&lt;P&gt;\n&lt;B&gt;Taiwan Patents No.&lt;/B&gt; I252433, I248015, I239480, I256016, I248029, I254875, I248028, I236628, I225621, I270819\n&lt;P&gt;\n&lt;B&gt;USA Patents No.&lt;/B&gt; 7190356, 7184031, 7180506, 6891531, 7274357, 7319457\n&lt;P&gt;\n&lt;B&gt;China Patents No.&lt;/B&gt; 317442, 289434, 355599, 332256, 230611, 355600, 1055707, 299751, 626581\n&lt;P&gt;\nCopyright© 2000-2008 Sentelic Corporation. All rights reserved.</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="htmlWinClickOnPadText">
+					<label>Use this checkbox to enable/disable on-pad click. On-pad click is like the left button on mouse.\n&lt;P&gt;\nThis function is covered by the following patents:\n&lt;P&gt;\n&lt;B&gt;Taiwan Patent No.&lt;/B&gt; I248028&lt;BR&gt;\n&lt;B&gt;USA Patent No.&lt;/B&gt; 7180506&lt;BR&gt;\n&lt;B&gt;China Patent No.&lt;/B&gt; 332256</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="htmlWinScrollOnPadText">
+					<label>To execute vertical scrolling, please enable the above checkbox. The sensing points are the top-right and bottom-right zones. To scroll, just put your finger on the sensing zones as indicated in the figure. To stop scrolling, just simply lift your finger up.\n&lt;P&gt;\nTo do horizontal scrolling is the same as to do vertical scrolling. Just put your finger on the horizontal scrolling zones as shown.\n&lt;P&gt;\nThe above scrolling functions are covered by the following patents:\n&lt;P&gt;\n&lt;B&gt;USA Patent No.&lt;/B&gt; 7319457&lt;BR&gt;\n&lt;B&gt;China Patent No.&lt;/B&gt; 299751</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="htmlWinAccelerationText">
+					<label>Move the slider toward Slow or Fast to adjust cursor movement speed, depending on your preference.</label>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="htmlWinSwInfoText">
+					<label>&lt;B&gt;Sentelic Finger-sensing Pad&lt;/B&gt; (2008/10/02)&lt;BR&gt;\nVersion:1.0.0 (To: All)\n&lt;P&gt;\nCopyright©2000-2008 Sentelic Corporation. All rights reserved.\n&lt;P&gt;\n&lt;A HREF=http://www.sentelic.com&gt;http://www.sentelic.com&lt;/A&gt;</label>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

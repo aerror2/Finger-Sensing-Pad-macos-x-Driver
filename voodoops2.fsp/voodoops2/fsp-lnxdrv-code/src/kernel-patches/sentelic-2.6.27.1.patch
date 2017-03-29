@@ -1,0 +1,77 @@
+#
+# How to apply this patch to vanilla Linux linux-2.6.27.1 kernel source tree:
+#
+#	# cd /usr/src/your/linux/kernel/path/.../drivers/input/mouse
+#	# patch -p1 < /path/to/this/patch/sentelic-2.6.27.1.patch
+#	# cp /path/to/this/patch/sentelic.[ch] .
+#	(then follow your regular kernel building procedure...)
+#
+diff -rupN mouse.orig/Makefile mouse/Makefile
+--- mouse.orig/Makefile	2008-10-16 07:02:53.000000000 +0800
++++ mouse/Makefile	2008-10-17 15:13:29.000000000 +0800
+@@ -18,7 +18,7 @@ obj-$(CONFIG_MOUSE_HIL)		+= hil_ptr.o
+ obj-$(CONFIG_MOUSE_VSXXXAA)	+= vsxxxaa.o
+ obj-$(CONFIG_MOUSE_GPIO)	+= gpio_mouse.o
+ 
+-psmouse-objs := psmouse-base.o synaptics.o
++psmouse-objs := psmouse-base.o synaptics.o sentelic.o
+ 
+ psmouse-$(CONFIG_MOUSE_PS2_ALPS)	+= alps.o
+ psmouse-$(CONFIG_MOUSE_PS2_LOGIPS2PP)	+= logips2pp.o
+diff -rupN mouse.orig/psmouse-base.c mouse/psmouse-base.c
+--- mouse.orig/psmouse-base.c	2008-10-16 07:02:53.000000000 +0800
++++ mouse/psmouse-base.c	2008-10-17 15:13:29.000000000 +0800
+@@ -28,6 +28,7 @@
+ #include "lifebook.h"
+ #include "trackpoint.h"
+ #include "touchkit_ps2.h"
++#include "sentelic.h"
+ 
+ #define DRIVER_DESC	"PS/2 mouse driver"
+ 
+@@ -630,6 +631,20 @@ static int psmouse_extensions(struct psm
+ 		}
+ 	}
+ 
++/*
++ * Try Finger Sensing Pad
++ */
++	if (max_proto > PSMOUSE_IMEX) {
++		if (fsp_detect(psmouse, set_properties) == 0) {
++			if (!set_properties || fsp_init(psmouse) == 0)
++				return PSMOUSE_FSP;
++/*
++ * Init failed, try basic relative protocols
++ */
++			max_proto = PSMOUSE_IMEX;
++		}
++	}
++
+ 	if (max_proto > PSMOUSE_IMEX) {
+ 
+ 		if (genius_detect(psmouse, set_properties) == 0)
+@@ -713,6 +728,13 @@ static const struct psmouse_protocol psm
+ 		.maxproto	= 1,
+ 		.detect		= intellimouse_detect,
+ 	},
++ 	{
++		.type		= PSMOUSE_FSP,
++		.name		= "FSPPS/2",
++		.alias		= "fsp",
++		.detect		= fsp_detect,
++		.init		= fsp_init,
++	},
+ 	{
+ 		.type		= PSMOUSE_IMEX,
+ 		.name		= "ImExPS/2",
+diff -rupN mouse.orig/psmouse.h mouse/psmouse.h
+--- mouse.orig/psmouse.h	2008-10-16 07:02:53.000000000 +0800
++++ mouse/psmouse.h	2008-10-17 15:13:29.000000000 +0800
+@@ -89,6 +89,7 @@ enum psmouse_type {
+ 	PSMOUSE_TRACKPOINT,
+ 	PSMOUSE_TOUCHKIT_PS2,
+ 	PSMOUSE_CORTRON,
++	PSMOUSE_FSP,
+ 	PSMOUSE_AUTO		/* This one should always be last */
+ };
+ 

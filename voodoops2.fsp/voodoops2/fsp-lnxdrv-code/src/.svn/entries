@@ -1,0 +1,77 @@
+10
+
+dir
+43
+svn://svn.code.sf.net/p/fsp-lnxdrv/code/trunk/src
+svn://svn.code.sf.net/p/fsp-lnxdrv/code
+
+
+
+2010-07-12T06:41:41.295199Z
+42
+atliang
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+d0b06d04-cc9c-4430-a1f5-0d86cff0ffee
+
+libfsp
+dir
+
+tools
+dir
+
+kernel-patches
+dir
+
+INSTALL
+file
+
+
+
+
+2013-12-22T14:40:21.000000Z
+6bf837d45db32cb6b851249dd45399cc
+2009-05-15T08:30:17.670611Z
+17
+atliang
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2870
+
+kernel-driver
+dir
+
+fspc
+dir
+

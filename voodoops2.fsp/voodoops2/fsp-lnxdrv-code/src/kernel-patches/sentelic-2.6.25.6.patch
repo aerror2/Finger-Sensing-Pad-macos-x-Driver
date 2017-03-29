@@ -1,0 +1,74 @@
+#
+# How to apply this patch to vanilla Linux linux-2.6.25.6 kernel source tree:
+#
+#	# cd /usr/src/your/linux/kernel/path/.../drivers/input/mouse
+#	# patch < /path/to/this/patch/sentelic-2.6.25.6.patch
+#	# cp /path/to/this/patch/sentelic.[ch] .
+#	(then follow your regular kernel building procedure...)
+#
+--- Makefile.orig	2008-06-17 16:41:51.000000000 +0800
++++ Makefile	2008-06-17 16:42:14.000000000 +0800
+@@ -17,7 +17,7 @@ obj-$(CONFIG_MOUSE_HIL)		+= hil_ptr.o
+ obj-$(CONFIG_MOUSE_VSXXXAA)	+= vsxxxaa.o
+ obj-$(CONFIG_MOUSE_GPIO)	+= gpio_mouse.o
+ 
+-psmouse-objs := psmouse-base.o synaptics.o
++psmouse-objs := psmouse-base.o synaptics.o sentelic.o
+ 
+ psmouse-$(CONFIG_MOUSE_PS2_ALPS)	+= alps.o
+ psmouse-$(CONFIG_MOUSE_PS2_LOGIPS2PP)	+= logips2pp.o
+--- psmouse-base.c.orig	2008-06-10 02:27:19.000000000 +0800
++++ psmouse-base.c	2008-06-17 16:46:34.000000000 +0800
+@@ -28,6 +28,7 @@
+ #include "lifebook.h"
+ #include "trackpoint.h"
+ #include "touchkit_ps2.h"
++#include "sentelic.h"
+ 
+ #define DRIVER_DESC	"PS/2 mouse driver"
+ 
+@@ -630,6 +631,20 @@ static int psmouse_extensions(struct psm
+ 		}
+ 	}
+ 
++/*
++ * Try Finger Sensing Pad
++ */
++	if (max_proto > PSMOUSE_IMEX) {
++		if (fsp_detect(psmouse, set_properties) == 0) {
++			if (!set_properties || fsp_init(psmouse) == 0)
++				return PSMOUSE_FSP;
++/*
++ * Init failed, try basic relative protocols
++ */
++			max_proto = PSMOUSE_IMEX;
++		}
++	}
++
+ 	if (max_proto > PSMOUSE_IMEX) {
+ 
+ 		if (genius_detect(psmouse, set_properties) == 0)
+@@ -713,6 +728,13 @@ static const struct psmouse_protocol psm
+ 		.maxproto	= 1,
+ 		.detect		= intellimouse_detect,
+ 	},
++ 	{
++		.type		= PSMOUSE_FSP,
++		.name		= "FSPPS/2",
++		.alias		= "fsp",
++		.detect		= fsp_detect,
++		.init		= fsp_init,
++	},
+ 	{
+ 		.type		= PSMOUSE_IMEX,
+ 		.name		= "ImExPS/2",
+--- psmouse.h.orig	2008-06-10 02:27:19.000000000 +0800
++++ psmouse.h	2008-06-17 16:42:46.000000000 +0800
+@@ -89,6 +89,7 @@ enum psmouse_type {
+ 	PSMOUSE_TRACKPOINT,
+ 	PSMOUSE_TOUCHKIT_PS2,
+ 	PSMOUSE_CORTRON,
++	PSMOUSE_FSP,
+ 	PSMOUSE_AUTO		/* This one should always be last */
+ };
+ 

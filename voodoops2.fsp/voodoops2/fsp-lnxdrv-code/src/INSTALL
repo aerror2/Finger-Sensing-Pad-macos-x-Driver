@@ -1,0 +1,117 @@
+===================================================
+ How to install Finger Sensing Pad driver in Linux
+===================================================
+
+Build the kernel module
+=======================
+
+1. patch the kernel, here we use linux-2.6.25.6 as an example:
+
+::
+
+    # cd /tmp && tar zxf fsp.tgz
+    # cd /usr/src/linux-2.6.25.6/drive/input/mouse
+    # cat sentelic-2.6.25.6.patch | patch -p1
+    # cp /tmp/sentelic.[ch] .
+
+2. rebuild kernel/module by following ordinary kernel build process.
+
+
+X.Org sample configuration(/etc/X11/xorg.conf)
+==============================================
+
+* Load "evdev" module by default:
+
+::
+
+    Section "Module"
+	.
+	.
+	.
+	Load "evdev"
+	. 
+    EndSection
+
+* Create an input section for FSP:
+
+::
+
+    Section     "InputDevice"
+	Identifier  "fsp"
+	Driver      "evdev"
+	# for evdev(4) that supports "Name" option, use the following
+	Option      "Name"	"FSPPS/2 Sentelic FingerSensingPad"
+	# for evdev(4) that doesn't support the "Name" option, use the following
+	Option      "Device"	"/dev/input/event5"
+    EndSection
+
+:NOTE: You can use http://game-sat.com/~brian/Howtos/evtest.c to verify 
+ the correct "/dev/input/event" to use, which must be named as 
+ "**FSPPS/2 Sentelic FingerSensingPad**":
+
+	|	> sudo ./evtest /dev/input/event5
+	|	Input driver version is 1.0.0
+	|	Input device ID: bus 0x11 vendor 0x2 product 0xd version 0x0
+	|	Input device name: "FSPPS/2 Sentelic FingerSensingPad"
+	|	Supported events:
+	|	  Event type 0 (Sync)
+	|	  Event type 1 (Key)
+	|	    Event code 272 (LeftBtn)
+	|	    Event code 273 (RightBtn)
+	|	    Event code 274 (MiddleBtn)
+	|	    Event code 277 (ForwardBtn)
+	|	    Event code 278 (BackBtn)
+	|	  Event type 2 (Relative)
+	|	    Event code 0 (X)
+	|	    Event code 1 (Y)
+	|	    Event code 6 (HWheel)
+	|	    Event code 8 (Wheel)
+	|	Testing ... (interrupt to exit)
+
+* Link section FSP to the X server:
+
+::
+
+    Section "ServerLayout"
+	.
+	.
+	.
+	InputDevice "fsp"   "AlwaysCore"
+	.
+	.
+	.
+    EndSection
+    
+ACPI callbacks(suspend/resume on Acer Aspire One)
+=================================================
+
+* Assume the fspc(FSP control utility) has been installed at either
+  /usr/bin/fspc or /usr/local/bin/fspc.
+
+* Create an executable script named fsp_reset.sh under /usr/bin:
+
+::
+
+    #!/bin/sh
+    echo "R" > /sys/devices/platform/i8042/serio2/flags
+    
+:NOTE: The number of serio[n] may be different depending on your setup.
+
+* Load user preference when X start by adding following command to
+  xinitrc:
+
+::
+
+    sudo /usr/bin/fsp_reset.sh
+    /usr/bin/fspc -t -l /home/user/.fspc/fspc.ini
+
+* For saving/restoring user preferences whilst entering ACPI S3/S4
+  mode. Add following commands to /etc/acpi/sleep.sh and
+  /etc/acpi/hibernate.sh:
+    
+::
+
+    /usr/bin/fspc -t -s /tmp/fspc-tmp.ini
+    /bin/dbus-send ...
+    /usr/bin/fspc -t -l /tmp/fspc-tmp.ini
+    rm -f /tmp/.fspc-tmp.ini

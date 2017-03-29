@@ -1,0 +1,74 @@
+#
+# How to apply this patch to vanilla Linux 2.6.17 kernel source tree:
+#
+#	# cd /usr/src/your/linux/kernel/path/.../drivers/input/mouse
+#	# patch -p1 < /path/to/this/patch/sentelic-2.6.17.patch
+#	# cp /path/to/this/patch/sentelic.[ch] .
+#	(then follow your regular kernel building procedure...)
+#
+diff -ru mouse.old/Makefile mouse/Makefile
+--- mouse.old/Makefile	2006-06-18 09:49:35.000000000 +0800
++++ mouse/Makefile	2006-11-02 14:43:13.000000000 +0800
+@@ -14,4 +14,4 @@
+ obj-$(CONFIG_MOUSE_HIL)		+= hil_ptr.o
+ obj-$(CONFIG_MOUSE_VSXXXAA)	+= vsxxxaa.o
+ 
+-psmouse-objs  := psmouse-base.o alps.o logips2pp.o synaptics.o lifebook.o trackpoint.o
++psmouse-objs  := psmouse-base.o alps.o logips2pp.o synaptics.o lifebook.o trackpoint.o sentelic.o
+diff -ru mouse.old/psmouse-base.c mouse/psmouse-base.c
+--- mouse.old/psmouse-base.c	2006-06-18 09:49:35.000000000 +0800
++++ mouse/psmouse-base.c	2006-11-02 14:46:59.000000000 +0800
+@@ -28,6 +28,7 @@
+ #include "alps.h"
+ #include "lifebook.h"
+ #include "trackpoint.h"
++#include "sentelic.h"
+ 
+ #define DRIVER_DESC	"PS/2 mouse driver"
+ 
+@@ -591,6 +592,20 @@
+ 		}
+ 	}
+ 
++/*
++ * Try AVC Finger Sensing Pad
++ */
++	if (max_proto > PSMOUSE_IMEX) {
++		if (fsp_detect(psmouse, set_properties) == 0) {
++			if (!set_properties || fsp_init(psmouse) == 0)
++				return PSMOUSE_FSP;
++/*
++ * Init failed, try basic relative protocols
++ */
++			max_proto = PSMOUSE_IMEX;
++		}
++	}
++
+ 	if (max_proto > PSMOUSE_IMEX && genius_detect(psmouse, set_properties) == 0)
+ 		return PSMOUSE_GENPS;
+ 
+@@ -699,6 +714,13 @@
+ 		.detect		= trackpoint_detect,
+ 	},
+ 	{
++		.type		= PSMOUSE_FSP,
++		.name		= "FSPPS/2",
++		.alias		= "fsp",
++		.detect		= fsp_detect,
++		.init		= fsp_init,
++	},
++	{
+ 		.type		= PSMOUSE_AUTO,
+ 		.name		= "auto",
+ 		.alias		= "any",
+diff -ru mouse.old/psmouse.h mouse/psmouse.h
+--- mouse.old/psmouse.h	2006-06-18 09:49:35.000000000 +0800
++++ mouse/psmouse.h	2006-11-02 14:40:56.000000000 +0800
+@@ -86,6 +86,7 @@
+ 	PSMOUSE_ALPS,
+ 	PSMOUSE_LIFEBOOK,
+ 	PSMOUSE_TRACKPOINT,
++	PSMOUSE_FSP,
+ 	PSMOUSE_AUTO		/* This one should always be last */
+ };
+ 

@@ -1,0 +1,142 @@
+#
+# How to apply this patch to vanilla Linux linux-2.6.29.2 kernel source tree:
+#
+#	# cd /usr/src/your/linux/kernel/path
+#	# patch -p1 < /path/to/this/patch/sentelic-2.6.29.2.patch
+#	# cp /path/to/this/patch/sentelic.[ch] .
+#	(then follow your regular kernel building procedure...)
+#
+--- linux/drivers/input/mouse/Makefile.orig	2009-05-14 13:27:49.000000000 +0800
++++ linux/drivers/input/mouse/Makefile	2009-05-14 13:21:17.000000000 +0800
+@@ -26,5 +26,6 @@
+ psmouse-$(CONFIG_MOUSE_PS2_OLPC)	+= hgpk.o
+ psmouse-$(CONFIG_MOUSE_PS2_LOGIPS2PP)	+= logips2pp.o
+ psmouse-$(CONFIG_MOUSE_PS2_LIFEBOOK)	+= lifebook.o
++psmouse-$(CONFIG_MOUSE_PS2_SENTELIC)	+= sentelic.o
+ psmouse-$(CONFIG_MOUSE_PS2_TRACKPOINT)	+= trackpoint.o
+ psmouse-$(CONFIG_MOUSE_PS2_TOUCHKIT)	+= touchkit_ps2.o
+--- linux/drivers/input/mouse/Kconfig.orig	2009-05-14 13:28:06.000000000 +0800
++++ linux/drivers/input/mouse/Kconfig	2009-05-14 13:20:54.000000000 +0800
+@@ -107,6 +107,14 @@
+ 	  entries. For further information,
+ 	  see <file:Documentation/input/elantech.txt>.
+ 
++config MOUSE_PS2_SENTELIC
++	bool "Sentelic Finger Sensing Pad PS/2 protocol extension"
++	depends on MOUSE_PS2
++	help
++	  Say Y here if you have a laptop (such as MSI WIND Netbook)
++	  with Sentelic Finger Sensing Pad touchpad.
++
++	  If unsure, say N.
+ 
+ config MOUSE_PS2_TOUCHKIT
+ 	bool "eGalax TouchKit PS/2 protocol extension"
+--- linux/drivers/input/mouse/psmouse.h.orig	2009-05-14 13:27:01.000000000 +0800
++++ linux/drivers/input/mouse/psmouse.h	2009-05-07 18:25:11.000000000 +0800
+@@ -91,6 +91,7 @@
+ 	PSMOUSE_CORTRON,
+ 	PSMOUSE_HGPK,
+ 	PSMOUSE_ELANTECH,
++	PSMOUSE_FSP,
+ 	PSMOUSE_AUTO		/* This one should always be last */
+ };
+ 
+--- linux/drivers/input/mouse/psmouse-base.c.orig	2009-05-14 13:26:47.000000000 +0800
++++ linux/drivers/input/mouse/psmouse-base.c	2009-05-14 13:22:00.000000000 +0800
+@@ -30,6 +30,7 @@
+ #include "trackpoint.h"
+ #include "touchkit_ps2.h"
+ #include "elantech.h"
++#include "sentelic.h"
+ 
+ #define DRIVER_DESC	"PS/2 mouse driver"
+ 
+@@ -664,6 +665,20 @@
+ 		max_proto = PSMOUSE_IMEX;
+ 	}
+ 
++ /*
++ * Try Finger Sensing Pad
++ */
++	if (max_proto > PSMOUSE_IMEX) {
++		if (fsp_detect(psmouse, set_properties) == 0) {
++			if (!set_properties || fsp_init(psmouse) == 0)
++				return PSMOUSE_FSP;
++/*
++ * Init failed, try basic relative protocols
++ */
++ 			max_proto = PSMOUSE_IMEX;
++		}
++	}
++
+ 	if (max_proto > PSMOUSE_IMEX) {
+ 		if (genius_detect(psmouse, set_properties) == 0)
+ 			return PSMOUSE_GENPS;
+@@ -811,7 +826,16 @@
+ 		.detect		= elantech_detect,
+ 		.init		= elantech_init,
+ 	},
+- #endif
++#endif
++#ifdef CONFIG_MOUSE_PS2_SENTELIC
++	{
++		.type		= PSMOUSE_FSP,
++		.name		= "FSPPS/2",
++		.alias		= "fsp",
++		.detect		= fsp_detect,
++		.init		= fsp_init,
++	},
++#endif
+ 	{
+ 		.type		= PSMOUSE_CORTRON,
+ 		.name		= "CortronPS/2",
+--- linux/include/linux/libps2.h.orig	2009-05-20 15:50:00.000000000 +0800
++++ linux/include/linux/libps2.h	2009-05-20 15:50:08.000000000 +0800
+@@ -44,6 +44,7 @@
+ void ps2_init(struct ps2dev *ps2dev, struct serio *serio);
+ int ps2_sendbyte(struct ps2dev *ps2dev, unsigned char byte, int timeout);
+ void ps2_drain(struct ps2dev *ps2dev, int maxbytes, int timeout);
++int __ps2_command(struct ps2dev *ps2dev, unsigned char *param, int command);
+ int ps2_command(struct ps2dev *ps2dev, unsigned char *param, int command);
+ int ps2_handle_ack(struct ps2dev *ps2dev, unsigned char data);
+ int ps2_handle_response(struct ps2dev *ps2dev, unsigned char data);
+--- linux/drivers/input/serio/libps2.c.orig	2009-05-20 15:50:25.000000000 +0800
++++ linux/drivers/input/serio/libps2.c	2009-05-20 15:52:17.000000000 +0800
+@@ -161,7 +161,7 @@
+  * ps2_command() can only be called from a process context
+  */
+ 
+-int ps2_command(struct ps2dev *ps2dev, unsigned char *param, int command)
++int __ps2_command(struct ps2dev *ps2dev, unsigned char *param, int command)
+ {
+ 	int timeout;
+ 	int send = (command >> 12) & 0xf;
+@@ -179,8 +179,6 @@
+ 		return -1;
+ 	}
+ 
+-	mutex_lock(&ps2dev->cmd_mutex);
+-
+ 	serio_pause_rx(ps2dev->serio);
+ 	ps2dev->flags = command == PS2_CMD_GETID ? PS2_FLAG_WAITID : 0;
+ 	ps2dev->cmdcnt = receive;
+@@ -234,6 +232,18 @@
+ 	mutex_unlock(&ps2dev->cmd_mutex);
+ 	return rc;
+ }
++EXPORT_SYMBOL(__ps2_command);
++
++int ps2_command(struct ps2dev *ps2dev, unsigned char *param, int command)
++{
++	int rc;
++
++	mutex_lock(&ps2dev->cmd_mutex);
++	rc = __ps2_command(ps2dev, param, command);
++	mutex_unlock(&ps2dev->cmd_mutex);
++
++	return rc;
++}
+ EXPORT_SYMBOL(ps2_command);
+ 
+ /*

@@ -1,0 +1,29 @@
+		fspc - Finger-sensing Pad Configuration
+
+
+BUILDING REQUIREMENT
+
+1. wxWidgets - http://www.wxwidgets.org
+2. cmake - http://www.cmake.org/
+
+INSTALLATION
+
+After you have the building requirements installed, you can now install the
+fspc.
+
+The first step is to generate the Makefile for your compiler environment by
+running the following command.
+
+	cmake .
+
+The next step is to build fspc using your platform's make command.
+
+	make fspc
+
+Finally, copy necessary files to specific directories.
+
+	cp fspcui.xrc /usr/local/share/fspc/		(English)
+	cp fspcui_zh_CN.xrc /usr/local/share/fspc/	(Chinese Traditional)
+	cp fspcui_zh_TW.xrc /usr/local/share/fspc/	(Chinese Simple)
+	cp -R pic /usr/local/share/fspc/
+	cp fspc /usr/local/bin/
